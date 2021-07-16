@@ -2,12 +2,14 @@ import React from "react";
 // import { useFormik } from "formik";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import ErrorText from "./ErrorText";
 
 const initialValues = {
   name: "",
   email: "",
   channel: "",
   comments: "",
+  address: "",
 };
 
 const onSubmit = (values) => {
@@ -36,12 +38,15 @@ const onSubmit = (values) => {
 //   return errors;
 // };
 
+//Introducing yup
 const validationSchema = Yup.object({
   name: Yup.string().required("name is Required"),
   email: Yup.string()
     .required("email is required")
     .email("email format is incorrect"),
   channel: Yup.string().required("channel name is required"),
+  address: Yup.string().required("address is required"),
+  comments: Yup.string().required("comments is required"),
 });
 function FormikForm() {
   //Removing Boiler plates by using Formik Context
@@ -83,6 +88,7 @@ function FormikForm() {
             <span>{formik.errors.name}</span>
           ) : null}
         </div> */}
+
         <ErrorMessage name="name" />
         <div>
           <label>Email</label>
@@ -103,12 +109,19 @@ function FormikForm() {
             <span>{formik.errors.email}</span>
           ) : null}
         </div> */}
-        <ErrorMessage name="email" />
+
+        {/* //lets use render-props method to ErrorMessage */}
+        {/* <ErrorMessage name="email" /> */}
+        <ErrorMessage name="email">
+          {(ErrorMessage) => {
+            return <div>{ErrorMessage}</div>;
+          }}
+        </ErrorMessage>
         <div>
           <label>Channel</label>
           <Field
             // as="textarea"
-            type="textarea"
+            type="text"
             name="channel"
             // onChange={formik.handleChange}
             // value={formik.values.channel}
@@ -119,18 +132,35 @@ function FormikForm() {
           />
         </div>
         {/* Introducing ErrorMessage
+
         <div>
           {formik.touched.channel && formik.errors.channel ? (
             <span>{formik.errors.channel}</span>
           ) : null}
         </div> */}
-        <ErrorMessage name="channel" />
+        <ErrorMessage name="channel" component={ErrorText} />
 
         <div>
           <label>comments</label>
           <Field as="textarea" name="comments" />
+          <ErrorMessage name="comments" />
         </div>
 
+        <div>
+          <label>Address</label>
+          <Field name="address">
+            {/* //this helps in custom component rendering and attach iy to formik(render-props)*/}
+            {(props) => {
+              const { form, field, meta } = props;
+              return (
+                <div>
+                  <input {...field} />
+                  {meta.touched && meta.error ? <div>{meta.error}</div> : null}
+                </div>
+              );
+            }}
+          </Field>
+        </div>
         <div>
           <button type="submit">Submit</button>
         </div>
