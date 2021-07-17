@@ -10,6 +10,13 @@ const initialValues = {
   channel: "",
   comments: "",
   address: "",
+  //example for nested objects
+  social: {
+    facebook: "",
+    twitter: "",
+  },
+  //example for list / arrays
+  phoneNumber: ["", ""],
 };
 
 const onSubmit = (values) => {
@@ -47,6 +54,13 @@ const validationSchema = Yup.object({
   channel: Yup.string().required("channel name is required"),
   address: Yup.string().required("address is required"),
   comments: Yup.string().required("comments is required"),
+  // validating yup for objects
+  social: Yup.object({
+    facebook: Yup.string().required("facebook required"),
+    twitter: Yup.string().required("twitter required"),
+  }),
+  //validating yup for array of strings
+  phoneNumber: Yup.array().of(Yup.string().required()),
 });
 function FormikForm() {
   //Removing Boiler plates by using Formik Context
@@ -161,6 +175,35 @@ function FormikForm() {
             }}
           </Field>
         </div>
+        {/* //example for nested objects */}
+        <div>
+          <label>Facebook</label>
+          <Field name="social.facebook" />
+          <ErrorMessage name="social.facebook" />
+        </div>
+
+        <div>
+          <label>Twitter</label>
+          <Field name="social.twitter" />
+          <ErrorMessage name="social.twitter" />
+        </div>
+
+        {/* //Arrays or List  */}
+        <div>
+          <label>Primary Phone Number</label>
+          <Field name="phoneNumber[0]" />
+          <ErrorMessage name="phoneNumber[0]">
+            {(errorMessage) => {
+              return errorMessage ? <div>{errorMessage}</div> : null;
+            }}
+          </ErrorMessage>
+        </div>
+        <div>
+          <label>Secondary Phone Number</label>
+          <Field name="phoneNumber[1]" />
+          <ErrorMessage name="phoneNumber[1]" />
+        </div>
+
         <div>
           <button type="submit">Submit</button>
         </div>
@@ -168,5 +211,4 @@ function FormikForm() {
     </Formik>
   );
 }
-
 export default FormikForm;
