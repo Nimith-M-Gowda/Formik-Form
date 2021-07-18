@@ -1,6 +1,13 @@
 import React from "react";
 // import { useFormik } from "formik";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import {
+  Formik,
+  Form,
+  Field,
+  ErrorMessage,
+  FieldArray,
+  FastField,
+} from "formik";
 import * as Yup from "yup";
 import ErrorText from "./ErrorText";
 
@@ -17,6 +24,8 @@ const initialValues = {
   },
   //example for list / arrays
   phoneNumber: ["", ""],
+  hobbies: [""],
+  extras: "",
 };
 
 const onSubmit = (values) => {
@@ -53,7 +62,7 @@ const validationSchema = Yup.object({
     .email("email format is incorrect"),
   channel: Yup.string().required("channel name is required"),
   address: Yup.string().required("address is required"),
-  comments: Yup.string().required("comments is required"),
+  // comments: Yup.string().required("comments is required"),
   // validating yup for objects
   social: Yup.object({
     facebook: Yup.string().required("facebook required"),
@@ -61,7 +70,16 @@ const validationSchema = Yup.object({
   }),
   //validating yup for array of strings
   phoneNumber: Yup.array().of(Yup.string().required()),
+  //validating FieldArray
+  hobbies: Yup.array().of(Yup.string().required()),
 });
+
+//field level validation
+const validateComments = (values) => {
+  let error;
+  if (!values) error = "required";
+  return error;
+};
 function FormikForm() {
   //Removing Boiler plates by using Formik Context
   // const formik = useFormik({
@@ -76,6 +94,10 @@ function FormikForm() {
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+      //remove validation based on blur event
+      // validateOnBlur={false}
+      //remove validation based on onChange event
+      // validateOnChange={false}
     >
       {/*
       //replacing with Form Component
@@ -156,8 +178,13 @@ function FormikForm() {
 
         <div>
           <label>comments</label>
-          <Field as="textarea" name="comments" />
-          <ErrorMessage name="comments" />
+          {/* filed level validation */}
+          <Field as="textarea" name="comments" validate={validateComments} />
+          <ErrorMessage name="comments">
+            {(errorMessage) =>
+              errorMessage ? <div>{errorMessage}</div> : null
+            }
+          </ErrorMessage>
         </div>
 
         <div>
@@ -204,6 +231,39 @@ function FormikForm() {
           <ErrorMessage name="phoneNumber[1]" />
         </div>
 
+        {/* FieldArray usage to get hobby list */}
+        <div>
+          <label>Hobbies</label>
+          <FieldArray name="hobbies">
+            {(props) => {
+              const { push, remove, form } = props;
+              const { values } = form;
+              const { hobbies } = values;
+              return (
+                <div>
+                  {hobbies.map((hobby, index) => {
+                    return (
+                      <div key={index}>
+                        <Field name={`hobbies[${index}]`} />
+                        <button onClick={() => push("")}>+</button>
+                        {index > 0 && (
+                          <button onClick={() => remove(index)}>-</button>
+                        )}
+                        <ErrorMessage name={`hobbies[${index}]`} />
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            }}
+          </FieldArray>
+        </div>
+
+        {/* // No other field is dependent on this and this doesnot depend on any other form -elements so using Fastfield is more optimized*/}
+        <div>
+          <label>EXTRAS</label>
+          <FastField name="extras" />
+        </div>
         <div>
           <button type="submit">Submit</button>
         </div>
