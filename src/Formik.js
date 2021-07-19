@@ -28,8 +28,18 @@ const initialValues = {
   extras: "",
 };
 
-const onSubmit = (values) => {
-  console.log("🚀 ~ file: formik.js ~ line 12 ~ formik ~ formik", values);
+const onSubmit = (values, onSubmitProps) => {
+  try {
+    console.log("🚀 ~ file: Formik.js ~ line 32 ~ onSubmit ~ values", values);
+    console.log(
+      "🚀 ~ file: Formik.js ~ line 32 ~ onSubmit ~ onSubmitProps",
+      onSubmitProps
+    );
+  } catch (e) {
+    console.log(e);
+  } finally {
+    onSubmitProps.setSubmitting(false);
+  }
 };
 
 /**
@@ -103,171 +113,210 @@ function FormikForm() {
       //replacing with Form Component
       <form onSubmit={formik.handleSubmit}>
       */}
-      <Form>
-        <div>
-          <label>Name</label>
-          <Field
-            type="text"
-            name="name"
-            //reducing boiler plates
-            // onChange={formik.handleChange}
-            // value={formik.values.name}
-            // onBlur={formik.handleBlur}
 
-            //removing afetr Field Component
-            // {...getFieldProps("name")}
-          />
-        </div>
-        {/* Introducing ErrorMessage
+      {/* //Introducing to manual triggering of validation */}
+      {(formik) => {
+        console.log(
+          "🚀 ~ file: Formik.js ~ line 110 ~ FormikForm ~ formik",
+          formik
+        );
+        return (
+          <Form>
+            <div>
+              <label>Name</label>
+              <Field
+                type="text"
+                name="name"
+                //reducing boiler plates
+                // onChange={formik.handleChange}
+                // value={formik.values.name}
+                // onBlur={formik.handleBlur}
+
+                //removing afetr Field Component
+                // {...getFieldProps("name")}
+              />
+            </div>
+            {/* Introducing ErrorMessage
         <div>
           {formik.touched.name && formik.errors.name ? (
             <span>{formik.errors.name}</span>
           ) : null}
         </div> */}
 
-        <ErrorMessage name="name" />
-        <div>
-          <label>Email</label>
-          <Field
-            type="email"
-            name="email"
-            // onChange={formik.handleChange}
-            // value={formik.values.email}
-            // onBlur={formik.handleBlur}
+            <ErrorMessage name="name" />
+            <div>
+              <label>Email</label>
+              <Field
+                type="email"
+                name="email"
+                // onChange={formik.handleChange}
+                // value={formik.values.email}
+                // onBlur={formik.handleBlur}
 
-            //removing afetr Field Component
-            // {...getFieldProps("email")}
-          />
-        </div>
-        {/*Introducing ErrorMessage
+                //removing after Field Component
+                // {...getFieldProps("email")}
+              />
+            </div>
+            {/*Introducing ErrorMessage
         <div>
           {formik.touched.email && formik.errors.email ? (
             <span>{formik.errors.email}</span>
           ) : null}
         </div> */}
 
-        {/* //lets use render-props method to ErrorMessage */}
-        {/* <ErrorMessage name="email" /> */}
-        <ErrorMessage name="email">
-          {(ErrorMessage) => {
-            return <div>{ErrorMessage}</div>;
-          }}
-        </ErrorMessage>
-        <div>
-          <label>Channel</label>
-          <Field
-            // as="textarea"
-            type="text"
-            name="channel"
-            // onChange={formik.handleChange}
-            // value={formik.values.channel}
-            // onBlur={formik.handleBlur}
+            {/* //lets use render-props method to ErrorMessage */}
+            {/* <ErrorMessage name="email" /> */}
+            <ErrorMessage name="email">
+              {(ErrorMessage) => {
+                return <div>{ErrorMessage}</div>;
+              }}
+            </ErrorMessage>
+            <div>
+              <label>Channel</label>
+              <Field
+                // as="textarea"
+                type="text"
+                name="channel"
+                // onChange={formik.handleChange}
+                // value={formik.values.channel}
+                // onBlur={formik.handleBlur}
 
-            //removing afetr Field Component
-            // {...getFieldProps("channel")}
-          />
-        </div>
-        {/* Introducing ErrorMessage
+                //removing afetr Field Component
+                // {...getFieldProps("channel")}
+              />
+            </div>
+            {/* Introducing ErrorMessage
 
         <div>
           {formik.touched.channel && formik.errors.channel ? (
             <span>{formik.errors.channel}</span>
           ) : null}
         </div> */}
-        <ErrorMessage name="channel" component={ErrorText} />
+            <ErrorMessage name="channel" component={ErrorText} />
 
-        <div>
-          <label>comments</label>
-          {/* filed level validation */}
-          <Field as="textarea" name="comments" validate={validateComments} />
-          <ErrorMessage name="comments">
-            {(errorMessage) =>
-              errorMessage ? <div>{errorMessage}</div> : null
-            }
-          </ErrorMessage>
-        </div>
+            <div>
+              <label>comments</label>
+              {/* filed level validation   */}
+              <Field
+                as="textarea"
+                name="comments"
+                validate={validateComments}
+              />
+              <ErrorMessage name="comments">
+                {(errorMessage) =>
+                  errorMessage ? <div>{errorMessage}</div> : null
+                }
+              </ErrorMessage>
+            </div>
 
-        <div>
-          <label>Address</label>
-          <Field name="address">
-            {/* //this helps in custom component rendering and attach iy to formik(render-props)*/}
-            {(props) => {
-              const { form, field, meta } = props;
-              return (
-                <div>
-                  <input {...field} />
-                  {meta.touched && meta.error ? <div>{meta.error}</div> : null}
-                </div>
-              );
-            }}
-          </Field>
-        </div>
-        {/* //example for nested objects */}
-        <div>
-          <label>Facebook</label>
-          <Field name="social.facebook" />
-          <ErrorMessage name="social.facebook" />
-        </div>
+            <div>
+              <label>Address</label>
+              <Field name="address">
+                {/* //this helps in custom component rendering and attach iy to formik(render-props)*/}
+                {(props) => {
+                  const { form, field, meta } = props;
+                  return (
+                    <div>
+                      <input {...field} />
+                      {meta.touched && meta.error ? (
+                        <div>{meta.error}</div>
+                      ) : null}
+                    </div>
+                  );
+                }}
+              </Field>
+            </div>
+            {/* //example for nested objects */}
+            <div>
+              <label>Facebook</label>
+              <Field name="social.facebook" />
+              <ErrorMessage name="social.facebook" />
+            </div>
 
-        <div>
-          <label>Twitter</label>
-          <Field name="social.twitter" />
-          <ErrorMessage name="social.twitter" />
-        </div>
+            <div>
+              <label>Twitter</label>
+              <Field name="social.twitter" />
+              <ErrorMessage name="social.twitter" />
+            </div>
 
-        {/* //Arrays or List  */}
-        <div>
-          <label>Primary Phone Number</label>
-          <Field name="phoneNumber[0]" />
-          <ErrorMessage name="phoneNumber[0]">
-            {(errorMessage) => {
-              return errorMessage ? <div>{errorMessage}</div> : null;
-            }}
-          </ErrorMessage>
-        </div>
-        <div>
-          <label>Secondary Phone Number</label>
-          <Field name="phoneNumber[1]" />
-          <ErrorMessage name="phoneNumber[1]" />
-        </div>
+            {/* //Arrays or List  */}
+            <div>
+              <label>Primary Phone Number</label>
+              <Field name="phoneNumber[0]" />
+              <ErrorMessage name="phoneNumber[0]">
+                {(errorMessage) => {
+                  return errorMessage ? <div>{errorMessage}</div> : null;
+                }}
+              </ErrorMessage>
+            </div>
+            <div>
+              <label>Secondary Phone Number</label>
+              <Field name="phoneNumber[1]" />
+              <ErrorMessage name="phoneNumber[1]" />
+            </div>
 
-        {/* FieldArray usage to get hobby list */}
-        <div>
-          <label>Hobbies</label>
-          <FieldArray name="hobbies">
-            {(props) => {
-              const { push, remove, form } = props;
-              const { values } = form;
-              const { hobbies } = values;
-              return (
-                <div>
-                  {hobbies.map((hobby, index) => {
-                    return (
-                      <div key={index}>
-                        <Field name={`hobbies[${index}]`} />
-                        <button onClick={() => push("")}>+</button>
-                        {index > 0 && (
-                          <button onClick={() => remove(index)}>-</button>
-                        )}
-                        <ErrorMessage name={`hobbies[${index}]`} />
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            }}
-          </FieldArray>
-        </div>
+            {/* FieldArray usage to get hobby list */}
+            <div>
+              <label>Hobbies</label>
+              <FieldArray name="hobbies">
+                {(props) => {
+                  const { push, remove, form } = props;
+                  const { values } = form;
+                  const { hobbies } = values;
+                  return (
+                    <div>
+                      {hobbies.map((hobby, index) => {
+                        return (
+                          <div key={index}>
+                            <Field name={`hobbies[${index}]`} />
+                            <button onClick={() => push("")}>+</button>
+                            {index > 0 && (
+                              <button onClick={() => remove(index)}>-</button>
+                            )}
+                            <ErrorMessage name={`hobbies[${index}]`} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }}
+              </FieldArray>
+            </div>
 
-        {/* // No other field is dependent on this and this doesnot depend on any other form -elements so using Fastfield is more optimized*/}
-        <div>
-          <label>EXTRAS</label>
-          <FastField name="extras" />
-        </div>
-        <div>
-          <button type="submit">Submit</button>
-        </div>
-      </Form>
+            {/* // No other field is dependent on this and this doesn't depend on any other form -elements so using Fastfield is more optimized*/}
+            <div>
+              <label>EXTRAS</label>
+              <FastField name="extras" />
+            </div>
+            <div>
+              <div>
+                {/* //disable submit 2 ways
+                // 1 . when fields are invalid based on formik validation rules
+                // 2 . after submit click till api call ends*/}
+                <button
+                  type="submit"
+                  disabled={
+                    !(formik.dirty && formik.isValid) || formik.isSubmitting
+                  } //even dirty has issue if initialvalues are pre-set and submitting without changing initial values
+                  //because dirty because true when anything changes in form compared to its initial value
+                >
+                  Submit
+                </button>
+              </div>
+              <div>
+                <button
+                  onClick={() => {
+                    //if form is not touched then we can use formik.setTouched({name:true,email:true....})
+                    formik.validateForm();
+                  }}
+                >
+                  Form Validation
+                </button>
+              </div>
+            </div>
+          </Form>
+        );
+      }}
     </Formik>
   );
 }
