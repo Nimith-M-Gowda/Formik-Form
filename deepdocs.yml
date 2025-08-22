@@ -1,5 +1,5 @@
 target:
-  - url: "docs/check.md"
+  - url: "docs/Check.md"
 
 reinit: "unique-string-to-force-refresh-2"
 
